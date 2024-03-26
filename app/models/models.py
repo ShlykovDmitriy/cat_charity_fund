@@ -2,20 +2,18 @@ from datetime import datetime
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import Column, Boolean, DateTime, Integer, String, Text, ForeignKey
-from pydantic import PositiveInt
 
 from app.core.db import Base
 
 
 class BaseProjectDonationModel(Base):
-    full_amount = Column(PositiveInt, nullable=False)
+    __abstract__ = True
+
+    full_amount = Column(Integer, nullable=False)
     invested_amount = Column(Integer, default=0)
     fully_invested = Column(Boolean, default=False)
-    create_date = Column(DateTime, default=datetime.utcnow.strftime("%d.%m.%Y-%H%M%S"))
+    create_date = Column(DateTime, default=lambda: datetime.utcnow().strftime("%d.%m.%Y-%H%M%S"))
     close_date = Column(DateTime)
-
-    class Meta:
-        abstract = True
 
 
 class CharityProject(BaseProjectDonationModel):
