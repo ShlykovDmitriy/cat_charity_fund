@@ -25,6 +25,6 @@ class DonationGetForUser(DonationCreate):
 class DonationGetForSuperuser(DonationGetForUser):
     """Схема для показа пожертований. Для суперпользователей."""
     user_id: int
-    invested_amount: Optional[int] = Field(default=0)
-    fully_invested: Optional[bool] = Field(default=False)
+    invested_amount: Optional[int]
+    fully_invested: Optional[bool]
     close_date: Optional[datetime]

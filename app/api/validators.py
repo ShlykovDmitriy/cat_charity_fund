@@ -3,6 +3,9 @@ from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.constants import (FULL_AMOUNT_ERROR, INVESTED_AMOUNT_EXIST_ERROR,
+                                PROJECT_CLOSE_ERROR, PROJECT_NAME_ERROR,
+                                PROJECT_NO_FOUND_ERROR)
 from app.crud.projects import charity_project_crud
 from app.models.charity_project import CharityProject
 
@@ -18,7 +21,7 @@ async def charity_project_exist(
     if not charity_project:
         raise HTTPException(
             status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
-            detail='Проект не найден.'
+            detail=PROJECT_NO_FOUND_ERROR
         )
     return charity_project
 
@@ -35,7 +38,7 @@ async def name_charity_project_exist(
     if charity_project is not None:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail='Проект с таким именем уже существует!'
+            detail=PROJECT_NAME_ERROR
         )
 
 
@@ -48,7 +51,7 @@ async def check_invested_amount_for_delete(
     if charity_project.invested_amount:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail='В проект были внесены средства, не подлежит удалению!'
+            detail=INVESTED_AMOUNT_EXIST_ERROR
         )
 
 
@@ -65,7 +68,7 @@ async def check_full_amount_for_update(
     if obj_in_full_amount < charity_project.invested_amount:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail='Требуемая сумма проекта не может быть меньше вложенной!',
+            detail=FULL_AMOUNT_ERROR
         )
     return charity_project
 
@@ -79,6 +82,6 @@ async def check_fully_invested_for_update(
     if charity_project.fully_invested:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail='Нельзя изменять закрытый проект.',
+            detail=PROJECT_CLOSE_ERROR
         )
     return charity_project
