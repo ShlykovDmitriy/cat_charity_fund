@@ -1,1 +1,3 @@
-from .user import router as user_router
+from .donations import router as donation_router  # noqa
+from .projects import router as charity_project_router  # noqa
+from .user import router as user_router  # noqa
