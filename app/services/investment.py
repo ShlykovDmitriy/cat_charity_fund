@@ -10,6 +10,11 @@ async def create_investment(
         session: AsyncSession,
         obj,
 ):
+    """
+    Функция инвестирования.
+    Проверяет что есть пожертвования или проекты которые необходимо обработать.
+    Распределяет пожертования по проектам начиная с самого первого.
+    """
     projects = await session.execute(select(CharityProject).where(
         CharityProject.fully_invested == 0
     ).order_by('create_date'))

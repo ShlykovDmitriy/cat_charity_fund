@@ -7,6 +7,7 @@ from app.models import User
 
 
 class CRUDBase:
+    """Базовый клас для CRUD."""
 
     def __init__(self, model):
         self.model = model
@@ -15,6 +16,7 @@ class CRUDBase:
             self,
             session: AsyncSession
     ):
+        """Функция отображения всех объектов модели."""
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
 
@@ -24,6 +26,7 @@ class CRUDBase:
             session: AsyncSession,
             user: Optional[User] = None,
     ):
+        """Функция создания объекта модели."""
         obj_in_data = obj_in.dict()
         if user is not None:
             obj_in_data['user_id'] = user.id

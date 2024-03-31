@@ -7,12 +7,14 @@ from app.models import CharityProject
 
 
 class CRUDCharityProject(CRUDBase):
+    """Класс CRUD для проектов."""
 
     async def get(
             self,
             obj_id: int,
             session: AsyncSession
     ):
+        """Функция отображения объекта"""
         db_obj = await session.execute(
             select(self.model).where(
                 self.model.id == obj_id
@@ -26,6 +28,7 @@ class CRUDCharityProject(CRUDBase):
             obj_in,
             session: AsyncSession,
     ):
+        """Функция изменения объекта."""
         obj_data = jsonable_encoder(db_obj)
         update_data = obj_in.dict(exclude_unset=True)
 
@@ -42,6 +45,7 @@ class CRUDCharityProject(CRUDBase):
             db_obj,
             session: AsyncSession,
     ):
+        """Функция удаления проекта."""
         await session.delete(db_obj)
         await session.commit()
         return db_obj
@@ -51,6 +55,7 @@ class CRUDCharityProject(CRUDBase):
             charity_project_name: str,
             session: AsyncSession
     ):
+        """Функция поиска проекта по имени."""
         db_obj = await session.execute(
             select(CharityProject).where(
                 CharityProject.name == charity_project_name

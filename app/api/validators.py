@@ -11,6 +11,7 @@ async def charity_project_exist(
     project_id: int,
     session: AsyncSession,
 ) -> CharityProject:
+    """Проверка на наличие проекта."""
     charity_project = await charity_project_crud.get(
         obj_id=project_id, session=session
     )
@@ -26,7 +27,8 @@ async def name_charity_project_exist(
     name: str,
     session: AsyncSession,
 ):
-    charity_project = charity_project = await charity_project_crud.found_charity_project_by_name(
+    """Проверка на наличие имени."""
+    charity_project = await charity_project_crud.found_charity_project_by_name(
         charity_project_name=name,
         session=session
     )
@@ -41,6 +43,7 @@ async def check_invested_amount_for_delete(
     project_id: int,
     session: AsyncSession
 ):
+    """Проверка на наличие инвестиций."""
     charity_project = await charity_project_crud.get(project_id, session)
     if charity_project.invested_amount:
         raise HTTPException(
@@ -54,6 +57,10 @@ async def check_full_amount_for_update(
         obj_in_full_amount,
         session: AsyncSession,
 ) -> CharityProject:
+    """
+    Проверка измененного значения full_amount.
+    Не должно быть меньше вложеных пожертвований.
+    """
     charity_project = await charity_project_crud.get(project_id, session)
     if obj_in_full_amount < charity_project.invested_amount:
         raise HTTPException(
@@ -67,6 +74,7 @@ async def check_fully_invested_for_update(
         project_id: int,
         session: AsyncSession,
 ) -> CharityProject:
+    """Проверка, что проект не закрыт."""
     charity_project = await charity_project_crud.get(project_id, session)
     if charity_project.fully_invested:
         raise HTTPException(

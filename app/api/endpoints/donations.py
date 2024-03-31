@@ -28,7 +28,11 @@ async def get_all_donations(
     return donations
 
 
-@router.post('/', response_model=DonationGetForUser, response_model_exclude_none=True)
+@router.post(
+    '/',
+    response_model=DonationGetForUser,
+    response_model_exclude_none=True
+)
 async def create_donation(
         donation: DonationCreate,
         session: AsyncSession = Depends(get_async_session),
@@ -51,5 +55,6 @@ async def get_my_donations(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Вернуть список пожертвований пользователя, выполняющего запрос."""
-    my_donations = await donation_crud.get_multi_donations_current_user(user=user, session=session)
+    my_donations = await donation_crud.get_multi_donations_current_user(
+        user=user, session=session)
     return my_donations

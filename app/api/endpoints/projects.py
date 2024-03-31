@@ -82,7 +82,8 @@ async def update_charity_project(
     if obj_in.name:
         await name_charity_project_exist(obj_in.name, session)
     if obj_in.full_amount:
-        await check_full_amount_for_update(project_id, obj_in.full_amount, session)
+        await check_full_amount_for_update(
+            project_id, obj_in.full_amount, session)
 
     charity_project = await charity_project_crud.update(
         charity_project, obj_in, session
