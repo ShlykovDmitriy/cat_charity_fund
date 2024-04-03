@@ -1,6 +1,7 @@
 MIN_LEN_NAME_PROJECT = 1
 MAX_LEN_NAME_PROJECT = 100
 MIN_LEN_DESCRIPTION_PROJECT = 1
+DEFAULT_INVESTED_AMOUNT = 0
 PROJECT_NO_FOUND_ERROR = 'Проект не найден.'
 PROJECT_NAME_ERROR = 'Проект с таким именем уже существует!'
 INVESTED_AMOUNT_EXIST_ERROR = 'В проект были внесены средства, не подлежит удалению!'

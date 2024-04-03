@@ -11,9 +11,9 @@ from app.core.constants import (MAX_LEN_NAME_PROJECT,
 class ProjectCreate(BaseModel):
     """Схема для создания проекта."""
     name: str = Field(
-        ..., min_length=MIN_LEN_NAME_PROJECT, max_length=MAX_LEN_NAME_PROJECT)
+        min_length=MIN_LEN_NAME_PROJECT, max_length=MAX_LEN_NAME_PROJECT)
     description: str = Field(
-        ..., min_length=MIN_LEN_DESCRIPTION_PROJECT)
+        min_length=MIN_LEN_DESCRIPTION_PROJECT)
     full_amount: PositiveInt
 
 

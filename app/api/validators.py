@@ -4,26 +4,9 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.constants import (FULL_AMOUNT_ERROR, INVESTED_AMOUNT_EXIST_ERROR,
-                                PROJECT_CLOSE_ERROR, PROJECT_NAME_ERROR,
-                                PROJECT_NO_FOUND_ERROR)
+                                PROJECT_CLOSE_ERROR, PROJECT_NAME_ERROR)
 from app.crud.projects import charity_project_crud
 from app.models.charity_project import CharityProject
-
-
-async def charity_project_exist(
-    project_id: int,
-    session: AsyncSession,
-) -> CharityProject:
-    """Проверка на наличие проекта."""
-    charity_project = await charity_project_crud.get(
-        obj_id=project_id, session=session
-    )
-    if not charity_project:
-        raise HTTPException(
-            status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
-            detail=PROJECT_NO_FOUND_ERROR
-        )
-    return charity_project
 
 
 async def name_charity_project_exist(
@@ -59,7 +42,7 @@ async def check_full_amount_for_update(
         project_id: int,
         obj_in_full_amount,
         session: AsyncSession,
-) -> CharityProject:
+) -> None:
     """
     Проверка измененного значения full_amount.
     Не должно быть меньше вложеных пожертвований.
@@ -70,7 +53,6 @@ async def check_full_amount_for_update(
             status_code=HTTPStatus.BAD_REQUEST,
             detail=FULL_AMOUNT_ERROR
         )
-    return charity_project
 
 
 async def check_fully_invested_for_update(

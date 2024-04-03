@@ -3,17 +3,16 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import (charity_project_exist,
-                                check_full_amount_for_update,
+from app.api.validators import (check_full_amount_for_update,
                                 check_fully_invested_for_update,
                                 check_invested_amount_for_delete,
                                 name_charity_project_exist)
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.projects import charity_project_crud
-from app.schemas.charityproject import (ProjectDB, ProjectCreate,
-                                        ProjectUpdate)
-from app.services.investment import create_investment
+from app.schemas.charityproject import ProjectCreate, ProjectDB, ProjectUpdate
+from app.services.investment import investment_service
+from app.services.utilits import get_project_or_404
 
 router = APIRouter()
 
@@ -39,11 +38,8 @@ async def create_charity_project(
         charity_project: ProjectCreate,
         session: AsyncSession = Depends(get_async_session),
 ):
-    """Только для суперюзеров. Создаёт благотворительный проект."""
-    await name_charity_project_exist(charity_project.name, session)
-    project = await charity_project_crud.create(charity_project, session)
-    project = await create_investment(session, project)
-    return project
+    """Только для суперюзеров. Вернет созданный проект."""
+    return await investment_service.create_project(session, charity_project)
 
 
 @router.delete(
@@ -57,7 +53,7 @@ async def delete_charity_project(
 ):
     """Только для суперюзеров. Удаляет проект. Нельзя удалить проект,
     в который уже были инвестированы средства, его можно только закрыть."""
-    charity_project = await charity_project_exist(project_id, session)
+    charity_project = await get_project_or_404(project_id, session)
     await check_invested_amount_for_delete(charity_project.id, session)
     charity_project = await charity_project_crud.remove(
         charity_project, session
@@ -77,7 +73,7 @@ async def update_charity_project(
 ):
     """Только для суперюзеров. Закрытый проект нельзя редактировать;
     нельзя установить требуемую сумму меньше уже вложенной."""
-    charity_project = await charity_project_exist(project_id, session)
+    charity_project = await get_project_or_404(project_id, session)
     await check_fully_invested_for_update(project_id, session)
     if obj_in.name:
         await name_charity_project_exist(obj_in.name, session)
