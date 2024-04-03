@@ -3,16 +3,12 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import (check_full_amount_for_update,
-                                check_fully_invested_for_update,
-                                check_invested_amount_for_delete,
-                                name_charity_project_exist)
+from app.api.validators import get_project_or_404
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.projects import charity_project_crud
 from app.schemas.charityproject import ProjectCreate, ProjectDB, ProjectUpdate
 from app.services.investment import investment_service
-from app.services.utilits import get_project_or_404
 
 router = APIRouter()
 
@@ -54,11 +50,7 @@ async def delete_charity_project(
     """Только для суперюзеров. Удаляет проект. Нельзя удалить проект,
     в который уже были инвестированы средства, его можно только закрыть."""
     charity_project = await get_project_or_404(project_id, session)
-    await check_invested_amount_for_delete(charity_project.id, session)
-    charity_project = await charity_project_crud.remove(
-        charity_project, session
-    )
-    return charity_project
+    return await investment_service.delete_project(charity_project, session)
 
 
 @router.patch(
@@ -74,14 +66,5 @@ async def update_charity_project(
     """Только для суперюзеров. Закрытый проект нельзя редактировать;
     нельзя установить требуемую сумму меньше уже вложенной."""
     charity_project = await get_project_or_404(project_id, session)
-    await check_fully_invested_for_update(project_id, session)
-    if obj_in.name:
-        await name_charity_project_exist(obj_in.name, session)
-    if obj_in.full_amount:
-        await check_full_amount_for_update(
-            project_id, obj_in.full_amount, session)
-
-    charity_project = await charity_project_crud.update(
-        charity_project, obj_in, session
-    )
-    return charity_project
+    return await investment_service.update_project(
+        charity_project, obj_in, session)
