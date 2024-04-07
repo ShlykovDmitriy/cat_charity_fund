@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import get_project_or_404
+from app.api.utilits import get_project_or_404
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.projects import charity_project_crud
